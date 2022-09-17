@@ -24,7 +24,6 @@ export default function TodoItem({ id, isCompleted, content, status, updatingId,
 
     const [editing, setEditing] = useState(false);
     const activeEditing = () => {
-        setSelectableState(editing)
         setEditing(!editing);
         doBlur(editing, setEditing);
 
@@ -38,6 +37,27 @@ export default function TodoItem({ id, isCompleted, content, status, updatingId,
         forceCloseBlurs()
 
     }
+
+    const mouseOverHandler = () => {
+        console.log("enter")
+        setSelectableState(false)
+    }
+
+    const mouseLeaveHandler = () => {
+        console.log("leave")
+        setSelectableState(true)
+    }
+
+    useEffect(() => {
+        const notesActionsDiv = document.getElementById(`action-note-${id}`) as HTMLElement;
+        notesActionsDiv.addEventListener('mouseover', mouseOverHandler)
+        notesActionsDiv.addEventListener('mouseleave', mouseLeaveHandler)
+        return () => {
+            notesActionsDiv.removeEventListener('mouseover', mouseOverHandler)
+            notesActionsDiv.removeEventListener('mouseleave', mouseLeaveHandler)
+        }
+
+    }, [])
 
     useEffect(() => {
         if (updatingId === id && (status === 'success-editing')) activeEditing()
@@ -64,9 +84,11 @@ export default function TodoItem({ id, isCompleted, content, status, updatingId,
 
                     </div>
                     <span>{content}</span>
-                    <div className="flex flex-row gap-2 dark:bg-slate-100 dark:bg-opacity-30 p-2 dark:rounded-md dark:hover:bg-black dark:hover:scale-110 group duration-300 transition-all">
+                    <div id={`action-note-${id}`} className=" flex flex-row gap-2 dark:bg-slate-100 dark:bg-opacity-30 p-2 dark:rounded-md dark:hover:bg-black dark:hover:scale-110 group duration-300 transition-all">
                         <BsTrash onClick={() => deleteHandler()} size={20} className="text-red-600 dark:text-slate-600 dark:group-hover:text-white  dark:hover:text-slate-800 hover:opacity-70 cursor-pointer hover:scale-110" />
-                        <AiOutlineEdit onClick={() => activeEditing()} size={20} className="text-blue-600 dark:text-slate-600 dark:group-hover:text-white dark:hover:text-slate-800  hover:opacity-70 cursor-pointer hover:scale-110" />
+                        <div onClick={(e) => { e.stopPropagation(); activeEditing() }} >
+                            <AiOutlineEdit size={20} className="text-blue-600 dark:text-slate-600 dark:group-hover:text-white dark:hover:text-slate-800  hover:opacity-70 cursor-pointer hover:scale-110" />
+                        </div>
                     </div>
                 </>
             }
