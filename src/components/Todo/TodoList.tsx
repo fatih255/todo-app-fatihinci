@@ -74,7 +74,7 @@ export default function TodoList({ todosState: { todos: { todos, status, updatin
     }
     )
 
- 
+
 
 
     return (
@@ -95,10 +95,11 @@ export default function TodoList({ todosState: { todos: { todos, status, updatin
                     {todos && <span className="dark:text-white transition-all duration-1000">{`${todos?.length} adet Notunuz Var`}</span>}
                 </div>
                 <SelectCloud
-                    selectable={selectable}
+                
                     options={{
                         itemsClass: "note",
                         containerClass: "selection-area",
+                        notSelectableClasses: ["action-box", "editdiv", "edit-overlay","iscompleted"],
                         crossEffect({ style, classList }) {
                             classList.add("!bg-blue-100")
                             classList.add("dark:!bg-gray-700")
@@ -122,7 +123,6 @@ export default function TodoList({ todosState: { todos: { todos, status, updatin
                                     isCompleted={isCompleted}
                                     status={status}
                                     updatingId={updatingId}
-                                    setSelectableState={setSelectable}
                                     deleteHandler={() => api.deleteOne(id, { todos, updatingId: id }, setTodos, "deleting", "success-deleting")}
                                     updateHandler={(update) => api.update(id, update, { todos, updatingId: id }, setTodos, "updating-editing", 'success-editing')}
                                     changeIsCompleteHandler={() => api.update(id, { isCompleted: !isCompleted }, { todos: todos, updatingId: id }, setTodos, "updating-iscompleted", 'success-iscomplete')}

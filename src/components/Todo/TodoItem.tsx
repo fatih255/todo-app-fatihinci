@@ -15,11 +15,10 @@ type Props = {
     changeIsCompleteHandler: () => {},
     status: todoType["status"]
     updatingId: todoType["updatingId"]
-    setSelectableState: React.Dispatch<React.SetStateAction<boolean>>
 
 }
 
-export default function TodoItem({ id, isCompleted, content, status, updatingId, setSelectableState, deleteHandler, updateHandler, changeIsCompleteHandler }: Props) {
+export default function TodoItem({ id, isCompleted, content, status, updatingId, deleteHandler, updateHandler, changeIsCompleteHandler }: Props) {
 
 
     const [editing, setEditing] = useState(false);
@@ -38,33 +37,13 @@ export default function TodoItem({ id, isCompleted, content, status, updatingId,
 
     }
 
-    const mouseOverHandler = () => {
-        console.log("enter")
-        setSelectableState(false)
-    }
-
-    const mouseLeaveHandler = () => {
-        console.log("leave")
-        setSelectableState(true)
-    }
-
-    useEffect(() => {
-        const notesActionsDiv = document.getElementById(`action-note-${id}`) as HTMLElement;
-        notesActionsDiv.addEventListener('mouseover', mouseOverHandler)
-        notesActionsDiv.addEventListener('mouseleave', mouseLeaveHandler)
-        return () => {
-            notesActionsDiv.removeEventListener('mouseover', mouseOverHandler)
-            notesActionsDiv.removeEventListener('mouseleave', mouseLeaveHandler)
-        }
-
-    }, [])
 
     useEffect(() => {
         if (updatingId === id && (status === 'success-editing')) activeEditing()
     }, [updatingId, id, status])
 
     return (
-        <li data-id={id} className={cn(
+        <li className={cn(
             {
                 'translate-x-[140%] opacity-40 pointer-events-none cursor-wait bg-red-300': status === 'deleting' && updatingId && updatingId.includes(id),
                 'shadow-sm z-20 editing': editing
@@ -77,14 +56,14 @@ export default function TodoItem({ id, isCompleted, content, status, updatingId,
                             'opacity-30': !isCompleted,
                             'animate-bounce': updatingId === id && status === 'updating-iscompleted'
                         },
-                        'bg-emerald-600 transition-all duration-300 cursor-pointer hover:scale-125  rounded-full')} >
+                        'iscompleted bg-emerald-600 transition-all duration-300 cursor-pointer hover:scale-125  rounded-full')} >
                         {updatingId && updatingId.includes(id) && status === 'updating-iscompleted' ? <AiOutlineLoading3Quarters className="p-1  fill-white animate-spin" size={30} /> :
                             <BsCheck className="text-white " size={30} />
                         }
 
                     </div>
                     <span>{content}</span>
-                    <div id={`action-note-${id}`} className=" flex flex-row gap-2 dark:bg-slate-100 dark:bg-opacity-30 p-2 dark:rounded-md dark:hover:bg-black dark:hover:scale-110 group duration-300 transition-all">
+                    <div className="action-box flex flex-row gap-2 dark:bg-slate-100 dark:bg-opacity-30 p-2 dark:rounded-md dark:hover:bg-black dark:hover:scale-110 group duration-300 transition-all">
                         <BsTrash onClick={() => deleteHandler()} size={20} className="text-red-600 dark:text-slate-600 dark:group-hover:text-white  dark:hover:text-slate-800 hover:opacity-70 cursor-pointer hover:scale-110" />
                         <div onClick={(e) => { e.stopPropagation(); activeEditing() }} >
                             <AiOutlineEdit size={20} className="text-blue-600 dark:text-slate-600 dark:group-hover:text-white dark:hover:text-slate-800  hover:opacity-70 cursor-pointer hover:scale-110" />
@@ -93,13 +72,13 @@ export default function TodoItem({ id, isCompleted, content, status, updatingId,
                 </>
             }
             {
-                editing && <form className={cn('editdiv relative flex flex-row gap-4 justify-between w-full  ', {
+                editing && <form className={cn('editdiv  relative flex flex-row gap-4 justify-between w-full  ', {
                     'opacity-40 pointer-events-none cursor-wait': updatingId === id && status === 'updating-editing'
                 })} onSubmit={EditingSubmitHandler}>
                     <textarea className="w-full rounded-md border  p-1 dark:bg-slate-100 text-center  text-lg dark:focus:outline-none focus:outline-gray-200" name="content" defaultValue={content} />
                     <div className="flex flex-row  items-center gap-4">
-                        <SubmitButton icon={<BsCheck size={28} />} />
-                        <button onClick={activeEditing} className="hover:underline hover:scale-125 transition-all duration-300"><AiOutlineClose size={20} /></button>
+                        <SubmitButton  icon={<BsCheck size={28} />} />
+                        <button onClick={activeEditing} className="close-editing hover:underline hover:scale-125 transition-all duration-300"><AiOutlineClose size={20} /></button>
                     </div>
                     <div className="absolute w-full h-full flex justify-center items-center pointer-events-none ">
                         {updatingId === id && status === 'updating-editing' && <AiOutlineLoading3Quarters className="  fill-blue-500 dark:fill-black animate-spin" size={30} />}
